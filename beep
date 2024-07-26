@@ -51,7 +51,7 @@ class Beep
     | |              | || |              | || |              | || |              | || |     (_)      | |
     | '--------------' || '--------------' || '--------------' || '--------------' || '--------------' |
     '----------------'  '----------------'  '----------------'  '----------------'  '----------------' 
-                                                                           - Made by Dani Lobaton @ G2X
+                                                                           - Made with love by G2X
     ASCII
   end
 
@@ -60,7 +60,7 @@ class Beep
       puts "beep beep!"
     elsif ARGV == ["beep"]
       puts "beep beep beep beep!"
-    elsif ARGV == ["beep", "beep", "beep", "beep"]
+    elsif ARGV == ["beep", "beep", "beep"]
       beep_ascii_art
     elsif ARGV.count("beep") > 4
       puts "that's too much."

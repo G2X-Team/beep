@@ -1,0 +1,51 @@
+name: Update Homebrew Formula
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'beep'  # Adjust this if your main script has a different name or path
+
+jobs:
+  update-formula:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout beep repository
+      uses: actions/checkout@v2
+      with:
+        path: beep
+
+    - name: Checkout homebrew-tools repository
+      uses: actions/checkout@v2
+      with:
+        repository: G2X-Team/homebrew-tools
+        path: homebrew-tools
+        token: ${{ secrets.PAT_TOKEN }}
+
+    - name: Update formula
+      run: |
+        cd homebrew-tools
+        cat > beep.rb <<EOL
+        class Beep < Formula
+          homepage "https://github.com/G2X-Team/beep"
+          url "https://github.com/G2X-Team/beep.git", branch: "main"
+          version "$(cd ../beep && git rev-parse --short HEAD)"
+          license "MIT"
+
+          def install
+            bin.install "beep"
+          end
+
+          test do
+            assert_match "beep beep!", shell_output("\#{bin}/beep")
+          end
+        end
+        EOL
+
+    - name: Commit and push if changed
+      run: |
+        cd homebrew-tools
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git add beep.rb
+        git diff --quiet && git diff --staged --quiet || (git commit -m "Update beep formula to latest version" && git push)
