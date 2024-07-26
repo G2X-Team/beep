@@ -1,0 +1,72 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+
+class Beep
+  def initialize
+    @options = {
+      frequency: 440,
+      duration: 1,
+      volume: 1
+    }
+  end
+
+  def parse_options
+    OptionParser.new do |opts|
+      opts.banner = "Usage: beep [options]"
+
+      opts.on("-f", "--frequency FREQ", Integer, "Frequency in Hz (default: 440)") do |f|
+        @options[:frequency] = f
+      end
+
+      opts.on("-d", "--duration DUR", Float, "Duration in seconds (default: 1)") do |d|
+        @options[:duration] = d
+      end
+
+      opts.on("-v", "--volume VOL", Float, "Volume from 0 to 1 (default: 1)") do |v|
+        @options[:volume] = v.clamp(0, 1)
+      end
+
+      opts.on("-h", "--help", "Show this help message") do
+        puts opts
+        exit
+      end
+    end.parse!
+  end
+
+  def play
+    system("afplay", "-q", "1", "-v", @options[:volume].to_s, "/System/Library/Sounds/Funk.aiff")
+  end
+
+  def beep_ascii_art
+    puts <<-ASCII
+    _______  _______  _______  _______ 
+   |  ____ \\|  ____ \\|  ____ \\|  ____ \\
+   | |    \\/| |    \\/| |    \\/| |    \\/
+   | |__    | |__    | |__    | |__    
+   |  __|   |  __|   |  __|   |  __|   
+   | |      | |      | |      | |      
+   | |____/\\| |____/\\| |____/\\| |      
+   |_______/|_______/|_______/|_|      
+   
+           --- made by G2X ---
+    ASCII
+  end
+
+  def run
+    if ARGV.empty?
+      puts "beep beep!"
+    elsif ARGV == ["beep"]
+      puts "beep beep beep beep!"
+    elsif ARGV == ["beep", "beep", "beep", "beep"]
+      beep_ascii_art
+    elsif ARGV.count("beep") > 4
+      puts "that's too much."
+    else
+      parse_options
+      play
+    end
+  end
+end
+
+Beep.new.run
